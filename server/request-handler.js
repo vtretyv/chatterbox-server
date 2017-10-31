@@ -70,17 +70,19 @@ var requestHandler = function(request, response) {
   // The outgoing status.
   var responseObj = 'Reponse Object Initialized';
   var statusCode = 200;
+  //DEAL WITH WRONG ENDPOINT
   if ( request.url !== '/classes/messages') {
     console.log('In the 404');
     statusCode = 404;
     response.writeHead(404, 'ERROR URL not found' );
     response.end(responseObj);
   } 
-
+  //DEAL WITH REQUEST METHODS
   switch (request.method) {
   case 'GET':
     statusCode = 200;
     responseObj = JSON.stringify(data);
+    
     break;
   case 'OPTIONS':
     statusCode = 200;
@@ -94,11 +96,22 @@ var requestHandler = function(request, response) {
     });
 
     request.on('end', function() {
-      data.results.push(querystring.parse(body));
+      console.log('BODY AT END START',body);
+      //if (typeof body === 'string') {
+      console.log('IN THE STRING');
+      data.results.unshift(querystring.parse(body));
       responseObj = JSON.stringify(data);
+      //}
+      // } else {
+      //   data.results.unshift(body);
+      //   responseObj = JSON.stringify(data);
+      // }
       console.log('response', responseObj);
+      JSON.parse(responseObj);
       response.end(responseObj);
     });
+
+
 
     statusCode = 201;
     break;
