@@ -96,18 +96,24 @@ var requestHandler = function(request, response) {
     });
 
     request.on('end', function() {
-      console.log('BODY AT END START',body);
+      console.log('BODY AT END START', body);
+      console.log('BODY TYPE AT END START', typeof body);
+      console.log('BODY TYPE AT END START', body[0]);
+      //console.log('BODY TYPE AT END START', typeof JSON.parse(body));
+      
       //if (typeof body === 'string') {
       console.log('IN THE STRING');
-      data.results.unshift(querystring.parse(body));
-      responseObj = JSON.stringify(data);
-      //}
-      // } else {
-      //   data.results.unshift(body);
-      //   responseObj = JSON.stringify(data);
-      // }
+      if (body[0] === '{' && typeof JSON.parse(body) === 'object') {
+        //console.log('IN THE IF, DANGER ZONE');
+        data.results.unshift(JSON.parse(body));
+        responseObj = JSON.stringify(data);
+      } else {
+        //console.log('IN THE ELSE, DANGER ZONE');
+        data.results.unshift(querystring.parse(body));
+        responseObj = JSON.stringify(data);
+      }
       console.log('response', responseObj);
-      JSON.parse(responseObj);
+      //JSON.parse(responseObj);
       response.end(responseObj);
     });
 
